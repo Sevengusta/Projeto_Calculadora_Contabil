@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./calculadora_template.css">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>calculadora de Irrf</title>
+</head>
+<header>
+    <div class="container header">
+        <div class="title"><strong>Calculadora Contábil</strong> </div>
+        <nav class="menu" id="nav" >
+          <ul>
+              <li><a>Seguro Desemprego</a></li>
+              <li><a>Férias</a></li>
+              <li><a>FGTS</a></li>
+              <li><a>Rescisão</a></li>
+              <li><a class="active">IRRF</a></li>
+              <li><a>INSS</a></li>
+            </ul>
+          </nav>
+          <div class="menuBar">
+            <img src="./imagens/menu-bar.png" alt="">
+          </div>
+        </div>
+      </header>
+<body>
+    <section class="container auto">
+        <div class="options">
+            <ul>
+                <li><a>Seguro Desemprego</a></li>
+                <li><a>Férias</a></li>
+                <li><a>FGTS</a></li>
+                <li><a>Rescisão</a></li>
+                <li class="active"><a>IRRF</a></li>
+                <li><a>INSS</a></li>
+            </ul>
+        </div>
+        <div class="template"> 
+            <h1>Cálculo de Imposto de renda Retido na Fonte</h1>
+            <h3>O Imposto de Renda Retido na Fonte (IRRF) é uma porcentagem descontada do salário do trabalhador todos os meses pela Receita Federal.</h3>
+            <div class="calculo">
+                <form  method="GET" class="validator" name="calculo" onsubmit="return (submit)">
+                    <h4>Preencha os campos abaixo e clique em calcular</h4>
+                    <label for="salario">
+                        Salário Bruto Mensal (antes dos descontos) <br>
+                    </label>
+                    <input type="text" id="salario" placeholder="0,00" name="salario" required=>
+                    <label for="descontos">
+                        descontos sobre a folha <br>
+                    </label>
+                    <input type="text" id="descontos" placeholder="0,00" name="descontos" >
+                    <label for="dependentes"> 
+                        Número de dependentes
+                    </label>
+                    <input type="number" id="dependentes" placeholder="0" step="0" min="0" name="dependentes">
+                    <div class="buttonArea">
+                        <a class="coin"> <button type="submit" class="botao" name="submit" > calcular</a>
+                        <a><div class="image"> <img src="./imagens/real-brasileiro.png" alt=""> </div></a>
+                    </div>
+                </form>
+            </div>
+            <div id="resumo">
+              <h1>Resultado do seu cálculo</h1>
+              <div class="resumoBody">
+                <div class="resumoBodyLeft">
+                  <h4>O imposto de renda retido na fonte calculado é de:</h4>
+                  <h1 id="resumeResult"></h1>
+                </div>
+                <div class="resumoBodyRight">
+                  <h4>Isso equivale a:</h4> <br>
+                  <div class="resumoPercentual">
+                    <h1 id="resumeResultPerc"></h1> 
+                    <div class="resumeText">do seu salário</div>
+                    </div>
+                </div>
+              </div>
+            </div>
+            <div id="resultado">
+                <table class="table" id="tableResults">
+                    <thead>
+                      <tr>
+                        <th class="text-left" rowspan="2">Evento</th>
+                        <th class="text-center" colspan="2">Alíquota</th>
+                        <th class="text-center" rowspan="2">Proventos</th>
+                        <th class="text-center" rowspan="2">Descontos</th>
+                      </tr>
+                      <tr>
+                        <th class="text-center">Base</th>
+                        <th class="text-center">Efetiva</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="tr-info">
+                        <td class="text-left">Salário bruto</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td id="grossSalaryValue">-</td>
+                        <td>-</td>
+                      </tr>
+                      <tr class="tr-info">
+                        <td class="text-left">Outros</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td id="slOthersValue">-</td>
+                      </tr>
+                      <tr class="tr-info">
+                        <td class="text-left">INSS</td>
+                        <td id="slInssPercentBase">-</td>
+                        <td id="slInssPercent">-</td>
+                        <td>-</td>
+                        <td id="slInssValue">-</td>
+                      </tr>
+                      <tr class="tr-info">
+                        <td class="text-left">IRRF</td>
+                        <td id="slIrrfPercent">-</td>
+                        <td id="slIrrfEtive">-</td>
+                        <td>-</td>
+                        <td id="slIrrfValue">-</td>
+                      </tr>
+                      <tr class="tr-total">
+                        <td class="sl-tr-total-label" colspan="3">Totais</td><td id="totalValueGrossSalary">-</td>
+                        <td id="totalDiscountsGrossSalary">-</td>
+                      </tr>
+                      <tr class="tr-footer">
+                        <td colspan="3" class="font">Valor salário líquido</td>
+                        <td id="totalGrossSalaryLiquid" class="valueNet" colspan="2">-</td>
+                      </tr>
+                    </tbody>
+                  </table>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <div  class="container">
+            Produzido por Gustavo neves <br>
+            Agradecimentos: Catho e Mobills pelo HTML utilizado como base.
+        </div>
+    </footer>
+    <script src="net_salary.js"></script>
+</body>
+</html>
