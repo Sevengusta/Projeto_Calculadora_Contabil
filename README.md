@@ -1,8 +1,8 @@
 # Projeto_Calculadora_Contabil
 <h3>Objetivo do projeto:</h3>
-Meu primeiro projeto autoral. Projeto elaborado com intuíto de aglomerar várias ferramentas contábeis para facilitar a vida do dia a dia de usuários da informação contábil.
+Meu primeiro projeto 100% autoral. Projeto elaborado com intuíto de aglomerar várias ferramentas contábeis para facilitar a vida do dia a dia de usuários da informação contábil.
 
-<h1>Funcionalidades</h1>
+<h1>Funcionalidades:</h1>
 <ul>
   <li><strong>Calculadora de IRRF:</strong> ferramenta que calcula o valor do salário líquido mensal a partir do salário bruto bem valor do IRRF.</li>
 </ul>
