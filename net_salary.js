@@ -156,5 +156,3 @@ form.addEventListener('submit',function (submit) {
         resumo.style.display = "none";
     }
 })
-
-
