@@ -28,7 +28,6 @@ const descontosRegex = new RegExp(/^((,\d{0,2})?|[0-9]\d{0,9}(,\d{1,2})?)$/);
 const salario = document.getElementById('salario');
 const descontos = document.getElementById('descontos');
 const dependentes = document.getElementById('dependentes');
-console.log(salario)
 let validator = {
     descontosIsValid: () => {
         if (descontosRegex.test(descontos.value) && descontos.value !== ""){
@@ -38,7 +37,7 @@ let validator = {
         
         } else {
             descontos.innerHTML = descontos.value
-            alert("preencha o campo corretamente: valores positivos menores que 1 bilhão de reais com até 2 casas decimais")
+            alert("preencha o campo corretamente: valores positivos menores que 1 bilhão de reais com até duas casas decimais")
         }
     },
     salaryIsValid: () => {
@@ -47,21 +46,27 @@ let validator = {
         }else {
             salario.value = ""
             salario.innerHTML = salario.value
-            alert("preencha o campo corretamente: valores positivos menores que 1 bilhão de reais com até 2 casas decimais")
+            alert("preencha o campo corretamente: valores positivos menores que 1 bilhão de reais com até duas casas decimais")
         }
     }
 }
+
+
 // eventos com botao de submit e form
 const botao = document.querySelector('botao');
 const form = document.querySelector('form');
 form.addEventListener('submit', async function (submit) {
+    
     submit.preventDefault();
 
     // Cálculo do salário bruto
-    let valueS = validator.salaryIsValid(salario.value).replace(",",".")
+    let valueS = parseFloat(validator.salaryIsValid(salario.value).toString().replace(",",".")); //arrumar
+    console.log(validator.salaryIsValid(salario.value).toString().replace(",","."))
+    console.log(valueS);
+    console.log(typeof(valueS));
     grossSalaryValue.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valueS);
     // Cálculo dos outros descontos e dependentes
-    let valueDes = validator.descontosIsValid(descontos.value).replace(",",".");
+    let valueDes = parseFloat(validator.descontosIsValid(descontos.value).toString().replace(",",".")); //arrumar
     let othersV = parseFloat(valueDes);
     console.log(valueDes);
     slOthersValue.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(othersV);
@@ -96,7 +101,6 @@ form.addEventListener('submit', async function (submit) {
     let valueDep = dependentes.value * 189.59;
     let valueI = parseFloat(slInssValue.innerHTML.replace("R$&nbsp;","").replace(",","."));
     let baseIrrf = valueS - valueI - othersV - ~~valueDep;
-    console.log(baseIrrf)
     if (baseIrrf <= 2112.00){
         let valueIrrf = 0
         slIrrfPercent.innerHTML = "ISENTO";
@@ -127,8 +131,6 @@ form.addEventListener('submit', async function (submit) {
     totalValueGrossSalary.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valueS);
     let valueIrrf = parseFloat(slIrrfValue.innerHTML.replace("R$&nbsp;","").replace(".","").replace(".","").replace(",","."));
     let totalD = valueIrrf + valueI + othersV;
-    console.log(valueIrrf, valueI, othersV)
-    console.log(totalD)
     totalDiscountsGrossSalary.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalD)
     totalGrossSalaryLiquid.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format((valueS - totalD));
 
@@ -138,13 +140,11 @@ form.addEventListener('submit', async function (submit) {
     let valueResultPerc = (valueResult/valueS*100);
     resumeResultPerc.innerHTML = `${valueResultPerc.toFixed(2).toString().replace(".",",")}%`;
 
-    // esconder as divs de resultado e resumo
+    // esconder as divs de resultado e resumo (incompleto)
     resultado = document.querySelector('#resultado');
     resumo = document.querySelector('#resumo');
     resultado.style.display = "inherit";
     resumo.style.display = "inherit";
- 
-
 })
 
 
