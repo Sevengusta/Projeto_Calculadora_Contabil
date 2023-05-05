@@ -33,20 +33,20 @@ let validator = {
         if (descontosRegex.test(descontos.value) && descontos.value !== ""){
             return descontos.value;
         } else if (descontos.value == "") {
-            return descontos.value = 0
+            return descontos.value = 0;
         
         } else {
-            descontos.innerHTML = descontos.value
-            alert("preencha o campo corretamente: valores positivos menores que 1 bilhão de reais com até duas casas decimais e sem pontos")
+            descontos.innerHTML = descontos.value;
+            alert("preencha o campo corretamente: valores positivos, menores que 1 bilhão de reais com até duas casas decimais e sem pontos");
         }
     },
     salaryIsValid: () => {
         if (salarioRegex.test(salario.value) && salario.value !== "0"){
             return salario.value
         }else {
-            salario.value = ""
-            salario.innerHTML = salario.value
-            alert("preencha o campo corretamente: valores positivos menores que 1 bilhão de reais com até duas casas decimais e sem pontos")
+            salario.value = "";
+            salario.innerHTML = salario.value;
+            alert("preencha o campo corretamente: valores positivos, menores que 1 bilhão de reais com até duas casas decimais e sem pontos");
         }
     }
 }
@@ -60,13 +60,12 @@ form.addEventListener('submit',function (submit) {
     submit.preventDefault();
 
     // Cálculo do salário bruto
-    let valueS = parseFloat(validator.salaryIsValid(salario.value).toString().replace(",",".")); //arrumar
-    console.log(validator.salaryIsValid(salario.value).toString().replace(",","."))
+    let valueS = parseFloat(validator.salaryIsValid(salario.value)?.toString().replace(",",".")); //arrumar
     console.log(valueS);
     console.log(typeof(valueS));
     grossSalaryValue.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valueS);
     // Cálculo dos outros descontos e dependentes
-    let valueDes = parseFloat(validator.descontosIsValid(descontos.value).toString().replace(",",".")); //arrumar
+    let valueDes = parseFloat(validator.descontosIsValid(descontos.value)?.toString().replace(",",".")); //arrumar
     let othersV = parseFloat(valueDes);
     console.log(valueDes);
     slOthersValue.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(othersV);
@@ -146,8 +145,7 @@ form.addEventListener('submit',function (submit) {
     let valueResultPerc = (valueResult/valueS*100);
     resumeResultPerc.innerHTML = `${valueResultPerc.toFixed(2).toString().replace(".",",")}%`;
 
-    // esconder as divs de resultado e resumo (incompleto)
-    // arrumar erro ao coverter em string
+    // esconder as divs de resultado e resumo 
     resultado = document.querySelector('#resultado');
     resumo = document.querySelector('#resumo');
     if (validator.salaryIsValid(salario.value) && validator.descontosIsValid(descontos.value)){
