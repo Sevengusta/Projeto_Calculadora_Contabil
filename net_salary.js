@@ -37,16 +37,16 @@ let validator = {
         
         } else {
             descontos.innerHTML = descontos.value
-            alert("preencha o campo corretamente: valores positivos menores que 1 bilhão de reais com até duas casas decimais")
+            alert("preencha o campo corretamente: valores positivos menores que 1 bilhão de reais com até duas casas decimais e sem pontos")
         }
     },
     salaryIsValid: () => {
-        if (salarioRegex.test(salario.value)){
+        if (salarioRegex.test(salario.value) && salario.value !== "0"){
             return salario.value
         }else {
             salario.value = ""
             salario.innerHTML = salario.value
-            alert("preencha o campo corretamente: valores positivos menores que 1 bilhão de reais com até duas casas decimais")
+            alert("preencha o campo corretamente: valores positivos menores que 1 bilhão de reais com até duas casas decimais e sem pontos")
         }
     }
 }
@@ -55,7 +55,7 @@ let validator = {
 // eventos com botao de submit e form
 const botao = document.querySelector('botao');
 const form = document.querySelector('form');
-form.addEventListener('submit', async function (submit) {
+form.addEventListener('submit',function (submit) {
     
     submit.preventDefault();
 
@@ -72,31 +72,37 @@ form.addEventListener('submit', async function (submit) {
     slOthersValue.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(othersV);
     // Cálculo do INSS
     if (valueS <= 1302.00) {
-        let valueI = salario.value*(0.075);
+        let valueI = valueS*(0.075);
+        console.log(valueI);
         slInssValue.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valueI);
         slInssPercentBase.innerHTML = "7,5%";
-        slInssPercent.innerHTML = `${(~~(valueI/valueS*100).toFixed(1)).toString().replace(".",",")}%`;
+        slInssPercent.innerHTML = `${((valueI/valueS*100).toFixed(1)).toString().replace(".",",")}%`;
     } else if (valueS > 1302.00 && valueS <= 2571.29)  {
-        let valueI = (salario.value*(0.09) - 19.53);
+        let valueI = (valueS*(0.09) - 19.53);
+        console.log(valueI);
         slInssValue.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valueI);
         slInssPercentBase.innerHTML = "9,0%";
         slInssPercent.innerHTML = `${((valueI/valueS*100).toFixed(1)).toString().replace(".",",")}%`;
     } else if (valueS > 2571.30 && valueS <= 3856.94)  {
-        let valueI = (salario.value*(0.12) - 96.67);
+        let valueI = (valueS*(0.12) - 96.67);
+        console.log(valueI);
         slInssValue.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valueI);
         slInssPercentBase.innerHTML = "12,0%";
         slInssPercent.innerHTML = `${(((valueI)/valueS*100).toFixed(1)).toString().replace(".",",")}%`;
     } else if (valueS > 3856.94 && valueS <= 7507.49)  {
-        let valueI = (salario.value*(0.14) - 173.81);
+        let valueI = (valueS*(0.14) - 173.81);
+        console.log(valueI);
         slInssValue.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valueI);
         slInssPercentBase.innerHTML = "14,0%";
         slInssPercent.innerHTML = `${(((valueI)/valueS*100).toFixed(1)).toString().replace(".",",")}%`;
     } else{
         let valueI = 877.25;
+        console.log(valueI);
         slInssValue.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valueI);
         slInssPercentBase.innerHTML = "TETO";
         slInssPercent.innerHTML = `${((valueI)/valueS*100).toFixed(1).toString().replace(".",",")}%`;
     }
+    
     // Cálculo do IRRF
     let valueDep = dependentes.value * 189.59;
     let valueI = parseFloat(slInssValue.innerHTML.replace("R$&nbsp;","").replace(",","."));
@@ -141,10 +147,16 @@ form.addEventListener('submit', async function (submit) {
     resumeResultPerc.innerHTML = `${valueResultPerc.toFixed(2).toString().replace(".",",")}%`;
 
     // esconder as divs de resultado e resumo (incompleto)
+    // arrumar erro ao coverter em string
     resultado = document.querySelector('#resultado');
     resumo = document.querySelector('#resumo');
-    resultado.style.display = "inherit";
-    resumo.style.display = "inherit";
+    if (validator.salaryIsValid(salario.value) && validator.descontosIsValid(descontos.value)){
+        resultado.style.display = "inherit";
+        resumo.style.display = "inherit";
+    } else{
+        resultado.style.display = "none";
+        resumo.style.display = "none";
+    }
 })
 
 
