@@ -3,7 +3,7 @@ const menuBar = document.querySelector('.menuBar');
 const menu = document.querySelector('.menu');
 const container = document.querySelector('.container');
 window.onload = function (){
-    menuBar.addEventListener('click',  async () => {
+    menuBar.addEventListener('click', () => {
         menu.setAttribute('style','display:flex');
         menu.classList.toggle('hide');
         if(menu.classList.contains('hide')){
@@ -21,21 +21,49 @@ window.onload = function (){
     })
 }
 
+// validação de dados (incompleta) preciso refazer
 
-// eventos com o botao de submit
-const botao = document.querySelector('.botao');
+const salarioRegex = new RegExp(/^(0(,\d{1,2})?|[1-9]\d{0,9}(,\d{1,2})?)$/);
+const descontosRegex = new RegExp(/^((,\d{0,2})?|[0-9]\d{0,9}(,\d{1,2})?)$/);
+const salario = document.getElementById('salario');
+const descontos = document.getElementById('descontos');
+const dependentes = document.getElementById('dependentes');
+console.log(salario)
+let validator = {
+    descontosIsValid: () => {
+        if (descontosRegex.test(descontos.value) && descontos.value !== ""){
+            return descontos.value;
+        } else if (descontos.value == "") {
+            return descontos.value = 0
+        
+        } else {
+            descontos.innerHTML = descontos.value
+            alert("preencha o campo corretamente: valores positivos menores que 1 bilhão de reais com até 2 casas decimais")
+        }
+    },
+    salaryIsValid: () => {
+        if (salarioRegex.test(salario.value)){
+            return salario.value
+        }else {
+            salario.value = ""
+            salario.innerHTML = salario.value
+            alert("preencha o campo corretamente: valores positivos menores que 1 bilhão de reais com até 2 casas decimais")
+        }
+    }
+}
+// eventos com botao de submit e form
+const botao = document.querySelector('botao');
 const form = document.querySelector('form');
-form.addEventListener('submit', function (submit) {
+form.addEventListener('submit', async function (submit) {
     submit.preventDefault();
+
     // Cálculo do salário bruto
-    const salario = document.querySelector('#salario');
-    let valueS = parseFloat(salario.value);
+    let valueS = validator.salaryIsValid(salario.value).replace(",",".")
     grossSalaryValue.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valueS);
     // Cálculo dos outros descontos e dependentes
-    const descontos = document.querySelector('#descontos');
-    let valueDes = parseFloat(descontos.value);
-    let othersV = ~~valueDes;
-    console.log(othersV)
+    let valueDes = validator.descontosIsValid(descontos.value).replace(",",".");
+    let othersV = parseFloat(valueDes);
+    console.log(valueDes);
     slOthersValue.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(othersV);
     // Cálculo do INSS
     if (valueS <= 1302.00) {
@@ -65,7 +93,6 @@ form.addEventListener('submit', function (submit) {
         slInssPercent.innerHTML = `${((valueI)/valueS*100).toFixed(1).toString().replace(".",",")}%`;
     }
     // Cálculo do IRRF
-    const dependentes = document.querySelector('#dependentes');
     let valueDep = dependentes.value * 189.59;
     let valueI = parseFloat(slInssValue.innerHTML.replace("R$&nbsp;","").replace(",","."));
     let baseIrrf = valueS - valueI - othersV - ~~valueDep;
@@ -76,32 +103,34 @@ form.addEventListener('submit', function (submit) {
         slIrrfValue.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valueIrrf)
         slIrrfEtive.innerHTML = "0,0%";
     }else if (baseIrrf > 2112.00 && baseIrrf <= 2826.65 ){
-        let valueIrrf = baseIrrf*0.075 - 158.40;
+        let valueIrrf = (baseIrrf*0.075 - 158.40);
         slIrrfValue.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valueIrrf);
         slIrrfPercent.innerHTML = "7,5%";
         slIrrfEtive.innerHTML = `${((valueIrrf)/valueS*100).toFixed(1).toString().replace(".",",")}%`;
     }else if (baseIrrf > 2826.65 && baseIrrf <= 3751.05 ){
-        let valueIrrf = baseIrrf*0.15 - 370.40;
+        let valueIrrf = (baseIrrf*0.15 - 370.40);
         slIrrfValue.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valueIrrf);
         slIrrfPercent.innerHTML = "15,0%";
         slIrrfEtive.innerHTML = `${((valueIrrf)/valueS*100).toFixed(1).toString().replace(".",",")}%`;
     }else if (baseIrrf > 3751.05 && baseIrrf <= 4664.68 ){
-        let valueIrrf = baseIrrf*0.225 - 651.73
+        let valueIrrf = (baseIrrf*0.225 - 651.73)
         slIrrfValue.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valueIrrf);
         slIrrfPercent.innerHTML = "22,5%";
         slIrrfEtive.innerHTML = `${((valueIrrf)/valueS*100).toFixed(1).toString().replace(".",",")}%`;
     }else{
-        let valueIrrf = baseIrrf*0.275 - 884.96
+        let valueIrrf = (baseIrrf*0.275 - 884.96)
         slIrrfValue.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valueIrrf);
         slIrrfPercent.innerHTML = "27,5%";
         slIrrfEtive.innerHTML = `${((valueIrrf)/valueS*100).toFixed(1).toString().replace(".",",")}%`;
     }
-    // Cálculo dos totais salário líquido
+    // Cálculo dos totais e do salário líquido
     totalValueGrossSalary.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valueS);
     let valueIrrf = parseFloat(slIrrfValue.innerHTML.replace("R$&nbsp;","").replace(".","").replace(".","").replace(",","."));
     let totalD = valueIrrf + valueI + othersV;
+    console.log(valueIrrf, valueI, othersV)
+    console.log(totalD)
     totalDiscountsGrossSalary.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalD)
-    totalGrossSalaryLiquid.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(~~(valueS - totalD));
+    totalGrossSalaryLiquid.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format((valueS - totalD));
 
     // Resumo dos cálculos
     let valueResult = valueIrrf;
@@ -115,23 +144,7 @@ form.addEventListener('submit', function (submit) {
     resultado.style.display = "inherit";
     resumo.style.display = "inherit";
  
-    // validação de dados (incompleta) preciso refazer
 
-    const salarioRegex = new RegExp(/^(0(,\d{1,2})?|[1-9]\d{0,9}(,\d{1,2})?)$/);
-    const descontosRegex = new RegExp(/^((,\d{0,2})?|[0-9]\d{0,9}(,\d{1,2})?)$/);
-
-    if (salarioRegex.test(salario.value) && descontosRegex.test(descontos.value) ){
-        return true;
-    } else{
-        return alert("preencha os dados corretamente: valores positivos menores que 1 bilhão de reais")
-    }
-
-
-
-
-
-
-    form.submit()
 })
 
 
