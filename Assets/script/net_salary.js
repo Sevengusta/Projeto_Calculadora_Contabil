@@ -44,10 +44,25 @@ document.querySelector('body').addEventListener("scroll",showBtn())
 
 const salarioRegex = new RegExp(/^(1(,\d{1,2}[1-9])?|[1-9]\d{0,9}(,\d{1,2})?)$/);
 const descontosRegex = new RegExp(/^((,\d{0,2})?|[0-9]\d{0,9}(,\d{1,2})?)$/);
+const dependentesRegex = new RegExp(/^(()?|[0-9]\d{0,9}?)$/);
 const salario = document.getElementById('salario');
 const descontos = document.getElementById('descontos');
 const dependentes = document.getElementById('dependentes');
 let validator = {
+    dependentesIsvalid: () => {
+        dependentes.style.borderColor = '#FFFFFF';
+        if (dependentesRegex.test(dependentes.value)){
+            return dependentes.value;
+        }else {
+            dependentes.value = '';
+            dependentes.innerHTML = dependentes.value;
+            dependentes.style.borderColor = '#ffcc00';
+            let errorElement = document.createElement('div');
+            errorElement.classList.add('error');
+            errorElement.innerHTML = 'Campo precisa ser preenchido com valores inteiros!';
+            dependentes.parentElement.insertBefore(errorElement, dependentes.nextSibling);
+        }
+    },
     descontosIsValid: () => {
         descontos.style.borderColor = '#FFFFFF';
         if (descontosRegex.test(descontos.value)){
@@ -68,13 +83,23 @@ let validator = {
         if (salarioRegex.test(salario.value)){
             return salario.value 
         }else {
-            salario.value = "";
-            salario.innerHTML = salario.value;
-            salario.style.borderColor = '#ffcc00';
-            let errorElement = document.createElement('div') ;
-            errorElement.classList.add('error')
-            errorElement.innerHTML = 'Preencha o campo corretamente! Ex: (1,29), (31,0),(4027)...';
-            salario.parentElement.insertBefore(errorElement, salario.nextSibling);
+            if (salario.value == ''){
+                salario.value = "";
+                salario.innerHTML = salario.value;
+                salario.style.borderColor = '#ffcc00';
+                let errorElement = document.createElement('div') ;
+                errorElement.classList.add('error')
+                errorElement.innerHTML = 'Esse campo precisa ser preenchido ';
+                salario.parentElement.insertBefore(errorElement, salario.nextSibling);    
+            }else if (salario.value != ''){
+                salario.value = "";
+                salario.innerHTML = salario.value;
+                salario.style.borderColor = '#ffcc00';
+                let errorElement = document.createElement('div') ;
+                errorElement.classList.add('error')
+                errorElement.innerHTML = 'Preencha o campo corretamente! Ex: (1,29), (31,0),(4027)...';
+                salario.parentElement.insertBefore(errorElement, salario.nextSibling);
+            }
         }
     },
     clearErrors: () => {
@@ -92,7 +117,7 @@ const form = document.querySelector('form');
 form.addEventListener('submit',function (submit) {
         // esconder as divs de resultado e resumo 
     
-        if (salarioRegex.test(salario.value) && descontosRegex.test(descontos.value)){
+        if (salarioRegex.test(salario.value) && descontosRegex.test(descontos.value) && descontosRegex.test(dependentes.value)){
             resultado.style.display = "inherit";
             resumo.style.display = "inherit";
         } else{
@@ -148,7 +173,7 @@ form.addEventListener('submit',function (submit) {
     }
     
     // Cálculo do IRRF
-    let valueDep = dependentes.value * 189.59;
+    let valueDep = validator.dependentesIsvalid(dependentes.value)?.toString() * 189.59;
     let valueI = parseFloat(slInssValue.innerHTML.replace("R$&nbsp;","").replace(",","."));
     let baseIrrf = valueS - valueI - othersV - ~~valueDep;
     if (baseIrrf <= 2112.00){
