@@ -42,31 +42,46 @@ document.querySelector('body').addEventListener("scroll",showBtn())
 
 // validação de dados (incompleta) preciso refazer
 
-const salarioRegex = new RegExp(/^(0(,\d{1,2})?|[1-9]\d{0,9}(,\d{1,2})?)$/);
+const salarioRegex = new RegExp(/^(1(,\d{1,2}[1-9])?|[1-9]\d{0,9}(,\d{1,2})?)$/);
 const descontosRegex = new RegExp(/^((,\d{0,2})?|[0-9]\d{0,9}(,\d{1,2})?)$/);
 const salario = document.getElementById('salario');
 const descontos = document.getElementById('descontos');
 const dependentes = document.getElementById('dependentes');
 let validator = {
     descontosIsValid: () => {
-        if (descontosRegex.test(descontos.value) && descontos.value !== ""){
+        descontos.style.borderColor = '#FFFFFF';
+        if (descontosRegex.test(descontos.value)){
             return descontos.value;
-        } else if (descontos.value == "") {
-            return descontos.value = 0;
-        
-        } else {
+        }else {
+            descontos.value = '';
             descontos.innerHTML = descontos.value;
-            alert("preencha o campo corretamente: valores positivos, menores que 1 bilhão de reais com até duas casas decimais e sem pontos");
+            descontos.style.borderColor = '#ffcc00';
+            let errorElement = document.createElement('div');
+            errorElement.classList.add('error');
+            errorElement.innerHTML = 'Preencha o campo corretamente! Ex: (1,29), (31,0),(4027)...';
+            descontos.parentElement.insertBefore(errorElement, descontos.nextSibling);
+       
         }
     },
     salaryIsValid: () => {
-        if (salarioRegex.test(salario.value) && salario.value !== "0"){
-            return salario.value
+        validator.clearErrors()
+        if (salarioRegex.test(salario.value)){
+            return salario.value 
         }else {
             salario.value = "";
             salario.innerHTML = salario.value;
-            alert("preencha o campo corretamente: valores positivos, menores que 1 bilhão de reais com até duas casas decimais e sem pontos");
+            salario.style.borderColor = '#ffcc00';
+            let errorElement = document.createElement('div') ;
+            errorElement.classList.add('error')
+            errorElement.innerHTML = 'Preencha o campo corretamente! Ex: (1,29), (31,0),(4027)...';
+            salario.parentElement.insertBefore(errorElement, salario.nextSibling);
         }
+    },
+    clearErrors: () => {
+        let errorElements = document.querySelectorAll('.error');
+        salario.style.borderColor = '#FFFFFF';
+        for (let i = 0; i<errorElements.length; i++)
+            errorElements[i].remove();
     }
 }
 
@@ -75,18 +90,29 @@ let validator = {
 const botao = document.querySelector('botao');
 const form = document.querySelector('form');
 form.addEventListener('submit',function (submit) {
+        // esconder as divs de resultado e resumo 
+    
+        if (salarioRegex.test(salario.value) && descontosRegex.test(descontos.value)){
+            resultado.style.display = "inherit";
+            resumo.style.display = "inherit";
+        } else{
+            resultado.style.display = "none";
+            resumo.style.display = "none";
+        }
     
     submit.preventDefault();
 
     // Cálculo do salário bruto
     let valueS = parseFloat(validator.salaryIsValid(salario.value)?.toString().replace(",",".")); //arrumar
-    console.log(valueS);
-    console.log(typeof(valueS));
     grossSalaryValue.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valueS);
     // Cálculo dos outros descontos e dependentes
-    let valueDes = parseFloat(validator.descontosIsValid(descontos.value)?.toString().replace(",",".")); //arrumar
-    let othersV = parseFloat(valueDes);
-    console.log(valueDes);
+    
+    var valueDes = parseFloat(validator.descontosIsValid(descontos.value)?.toString().replace(",","."))
+    if (isNaN(valueDes)) {
+        othersV = 0
+    }else{
+        var othersV = parseFloat(valueDes);
+    }
     slOthersValue.innerHTML = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(othersV);
     // Cálculo do INSS
     if (valueS <= 1302.00) {
@@ -164,14 +190,5 @@ form.addEventListener('submit',function (submit) {
     let valueResultPerc = (valueResult/valueS*100);
     resumeResultPerc.innerHTML = `${valueResultPerc.toFixed(2).toString().replace(".",",")}%`;
 
-    // esconder as divs de resultado e resumo 
-    
-    if (validator.salaryIsValid(salario.value) && validator.descontosIsValid(descontos.value)){
-        resultado.style.display = "inherit";
-        resumo.style.display = "inherit";
-    } else{
-        resultado.style.display = "none";
-        resumo.style.display = "none";
-    }
     window.scrollTo(0,120 + resultado.clientHeight + resumo.clientHeight)
 })
