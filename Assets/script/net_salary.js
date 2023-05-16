@@ -117,7 +117,7 @@ const form = document.querySelector('form');
 form.addEventListener('submit',function (submit) {
         // esconder as divs de resultado e resumo 
     
-        if (salarioRegex.test(salario.value) && descontosRegex.test(descontos.value) && descontosRegex.test(dependentes.value)){
+        if (salarioRegex.test(salario.value) && descontosRegex.test(descontos.value) && dependentesRegex.test(dependentes.value)){
             resultado.style.display = "inherit";
             resumo.style.display = "inherit";
         } else{
